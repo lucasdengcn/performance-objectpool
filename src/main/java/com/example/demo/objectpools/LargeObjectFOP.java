@@ -29,7 +29,9 @@ public class LargeObjectFOP implements FlyObjectPool<Poolable<LargeObject>> {
         config.setMinSize(size);
         config.setMaxIdleMilliseconds(60 * 1000 * 5);
         //
-        pool = new cn.danielw.fop.ObjectPool<>(config, factory);
+        // pool = new cn.danielw.fop.ObjectPool<>(config, factory);
+        // DisruptorObjectPool
+        pool = new cn.danielw.fop.DisruptorObjectPool<>(config, factory);
     }
 
 

@@ -13,6 +13,7 @@ repositories {
 dependencies {
     // FOP
     implementation 'cn.danielw:fast-object-pool:2.2.1'
+    implementation 'com.conversantmedia:disruptor:1.2.16'
     // blaze pool
     implementation 'com.github.chrisvest:stormpot:4.0'
     implementation 'io.micrometer:micrometer-core:1.13.7'
