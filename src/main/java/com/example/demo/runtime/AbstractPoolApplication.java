@@ -6,6 +6,9 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
 import java.text.DecimalFormat;
 import java.util.concurrent.TimeUnit;
+import java.util.function.IntConsumer;
+import java.util.function.IntUnaryOperator;
+import java.util.stream.IntStream;
 
 
 public abstract class AbstractPoolApplication {
@@ -36,7 +39,54 @@ public abstract class AbstractPoolApplication {
         System.out.println("init pool capacity.");
         this.poolWarmUp(1_000_000);
         System.out.println("init pool capacity Done: 100_000 elements");
+        if (0 == concurrent) {
+            startInSingleThread();
+        } else {
+            startInMultiThread();
+        }
+    }
 
+    IntUnaryOperator intUnaryOperator = new IntUnaryOperator() {
+        @Override
+        public int applyAsInt(int operand) {
+            poolActions();
+            return 0;
+        }
+    };
+
+    private void startInMultiThread(){
+        System.out.println("Start in multi Threads");
+        System.out.println("Start in single Thread");
+        long currentTime = 0;
+        long nanoTime = 0;
+        long seconds = 0;
+        long endTime = System.nanoTime() + TimeUnit.MINUTES.toNanos(duration);
+        //
+        do {
+            currentTime = System.nanoTime();
+            //
+            IntStream.range(0, concurrent).parallel().map(intUnaryOperator).count();
+            //
+            nanoTime = System.nanoTime();
+            long diff = nanoTime - currentTime;
+            //
+            timer.record(diff, TimeUnit.NANOSECONDS);
+            //
+            long currentSecond = ofNanos(nanoTime);
+            if (currentSecond - seconds >= 1){
+                printMetrics(currentSecond);
+            }
+            seconds = currentSecond;
+            //
+        } while (nanoTime <= endTime);
+        //
+        printMetrics(0);
+        //
+        System.out.println("End");
+    }
+
+    private void startInSingleThread() {
+        System.out.println("Start in single Thread");
         long currentTime = 0;
         long nanoTime = 0;
         long seconds = 0;

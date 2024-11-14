@@ -2,7 +2,7 @@
 
 ## ConcurrentLinkedQueue
 
-NOT suitable.
+Can't directly use for Object Pool.
 
 given it creates Node Object every time on return Object to Object Pool.
 which cause huge amount of memory allocation. as following image showing.
@@ -11,14 +11,12 @@ which cause huge amount of memory allocation. as following image showing.
 
 ## LinkedTransferQueue
 
-Suitable.
-
 ### reference implementation on Storm BlazePool (https://github.com/chrisvest/stormpot)
 
 ![Memory Allocation](./images/blaze-pool-memory.png)
 
 
-### Can't directly use LinkedTransferQueue as SimpleObjectPool2 showing.
+### Can't directly use LinkedTransferQueue as following image showing.
 
 ![Node Allocation](./images/simplepool2-node.png)
 
@@ -26,5 +24,5 @@ Suitable.
 ## Storm BlazePool
 
 * unbound
-* cache in Local Thread
+* cache borrowed Object in Local Thread
 
