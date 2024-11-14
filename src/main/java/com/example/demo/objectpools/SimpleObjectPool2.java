@@ -1,9 +1,8 @@
 package com.example.demo.objectpools;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedTransferQueue;
 
-public class SimpleObjectPool2<T> implements ObjectPool<T> {
+public class SimpleObjectPool2<T> implements FlyObjectPool<T> {
 
     private final ObjectBuilder<T> builder;
     private final LinkedTransferQueue<T> objects;
@@ -38,6 +37,11 @@ public class SimpleObjectPool2<T> implements ObjectPool<T> {
 
     public long size() {
         return objects.size();
+    }
+
+    @Override
+    public void shutdown() {
+        objects.clear();
     }
 
 }

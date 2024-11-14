@@ -1,13 +1,12 @@
 package com.example.demo.objectpools;
 
 import com.example.demo.model.LargeObject;
-import com.example.demo.model.SmallObject;
 import stormpot.Allocator;
 import stormpot.Pool;
 import stormpot.Pooled;
 import stormpot.Slot;
 
-public class LargeObjectBlazePool implements ObjectPool<Pooled<LargeObject>> {
+public class LargeObjectBlazePool implements FlyObjectPool<Pooled<LargeObject>> {
 
     Allocator<Pooled<LargeObject>> allocator = new Allocator<Pooled<LargeObject>>() {
 
@@ -47,6 +46,11 @@ public class LargeObjectBlazePool implements ObjectPool<Pooled<LargeObject>> {
     @Override
     public long size() {
         return pool.getTargetSize();
+    }
+
+    @Override
+    public void shutdown() {
+        pool.shutdown();
     }
 
 }

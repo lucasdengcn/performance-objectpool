@@ -33,4 +33,9 @@ public class BlazePoolApplicationLargeImpl extends AbstractPoolApplication {
         return pool.size();
     }
 
+    @Override
+    public void shutdown() {
+        pool.shutdown();
+    }
+
 }

@@ -6,7 +6,7 @@ import com.example.demo.runtime.AbstractPoolApplication;
 
 public class SimplePoolApplicationSmallImpl extends AbstractPoolApplication {
 
-    private final ObjectPool<SmallObject> objectPool;
+    private final FlyObjectPool<SmallObject> objectPool;
 
     public SimplePoolApplicationSmallImpl(int duration, int concurrent){
         super(duration, concurrent);
@@ -30,6 +30,11 @@ public class SimplePoolApplicationSmallImpl extends AbstractPoolApplication {
     @Override
     public long poolSize() {
         return objectPool.size();
+    }
+
+    @Override
+    public void shutdown() {
+        objectPool.shutdown();
     }
 
 }

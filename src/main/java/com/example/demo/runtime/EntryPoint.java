@@ -3,6 +3,8 @@ package com.example.demo.runtime;
 
 import com.example.demo.runtime.blazepool.BlazePoolApplicationLargeImpl;
 import com.example.demo.runtime.blazepool.BlazePoolApplicationSmallImpl;
+import com.example.demo.runtime.fop.FOPApplicationLargeImpl;
+import com.example.demo.runtime.fop.FOPApplicationSmallImpl;
 import com.example.demo.runtime.nopool.NoPoolApplicationLargeImpl;
 import com.example.demo.runtime.nopool.NoPoolApplicationSmallImpl;
 import com.example.demo.runtime.simplepool.SimplePool2ApplicationLargeImpl;
@@ -37,6 +39,8 @@ public class EntryPoint {
         applicationMap.put("simple-large", SimplePoolApplicationLargeImpl.class);
         applicationMap.put("simple2-small", SimplePool2ApplicationSmallImpl.class);
         applicationMap.put("simple2-large", SimplePool2ApplicationLargeImpl.class);
+        applicationMap.put("fop-small", FOPApplicationSmallImpl.class);
+        applicationMap.put("fop-large", FOPApplicationLargeImpl.class);
         //
         Thread thread = new Thread(new Runnable() {
             @Override

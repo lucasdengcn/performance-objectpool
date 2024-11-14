@@ -1,9 +1,8 @@
 package com.example.demo.objectpools;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class NoObjectPool<T> implements ObjectPool<T> {
+public class NoObjectPool<T> implements FlyObjectPool<T> {
 
     private final AtomicLong count = new AtomicLong(0);
     private final ObjectBuilder<T> builder;
@@ -31,5 +30,10 @@ public class NoObjectPool<T> implements ObjectPool<T> {
     @Override
     public long size() {
         return count.get();
+    }
+
+    @Override
+    public void shutdown() {
+
     }
 }

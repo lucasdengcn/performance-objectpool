@@ -5,10 +5,9 @@ import io.micrometer.core.instrument.distribution.ValueAtPercentile;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
 import java.text.DecimalFormat;
-import java.util.concurrent.TimeUnit;
-import java.util.function.IntConsumer;
-import java.util.function.IntUnaryOperator;
-import java.util.stream.IntStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
 
 public abstract class AbstractPoolApplication {
@@ -23,6 +22,8 @@ public abstract class AbstractPoolApplication {
     //
     private final DecimalFormat decimalFormat = new DecimalFormat("##.###");
     private final DecimalFormat decimalFormat2 = new DecimalFormat("###,###.###");
+    private final ExecutorService executorService;
+    private final List<Callable<Void>> tasks;
 
     public AbstractPoolApplication(int duration, int concurrent){
         this.duration = duration;
@@ -32,6 +33,20 @@ public abstract class AbstractPoolApplication {
                 .publishPercentiles(0.5, 0.9, 0.95, 0.99, 0.99999)
                 .publishPercentileHistogram()
                 .register(registry);
+        //
+        if (concurrent > 0){
+            executorService = new ThreadPoolExecutor(concurrent, Integer.MAX_VALUE,
+                    60L, TimeUnit.SECONDS,
+                    new SynchronousQueue<Runnable>());
+//            executorService = Executors.newVirtualThreadPerTaskExecutor();
+            tasks = new ArrayList<Callable<Void>>(concurrent);
+            for (int i=0; i<concurrent; i++){
+                tasks.add(runnable);
+            }
+        } else {
+            executorService = null;
+            tasks = null;
+        }
     }
 
     public void start(){
@@ -44,44 +59,46 @@ public abstract class AbstractPoolApplication {
         } else {
             startInMultiThread();
         }
+        this.shutdown();
     }
 
-    IntUnaryOperator intUnaryOperator = new IntUnaryOperator() {
+    Callable<Void> runnable = new Callable<Void>() {
         @Override
-        public int applyAsInt(int operand) {
+        public Void call() throws Exception {
+            long currentTime = System.nanoTime();
             poolActions();
-            return 0;
+            long diff = System.nanoTime() - currentTime;
+            timer.record(diff, TimeUnit.NANOSECONDS);
+            return null;
         }
     };
 
     private void startInMultiThread(){
         System.out.println("Start in multi Threads");
-        System.out.println("Start in single Thread");
-        long currentTime = 0;
-        long nanoTime = 0;
         long seconds = 0;
+        long nanoTime = 0;
         long endTime = System.nanoTime() + TimeUnit.MINUTES.toNanos(duration);
         //
         do {
-            currentTime = System.nanoTime();
             //
-            IntStream.range(0, concurrent).parallel().map(intUnaryOperator).count();
+            try {
+                executorService.invokeAll(tasks);
+                // Thread.sleep(1);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             //
             nanoTime = System.nanoTime();
-            long diff = nanoTime - currentTime;
-            //
-            timer.record(diff, TimeUnit.NANOSECONDS);
-            //
-            long currentSecond = ofNanos(nanoTime);
-            if (currentSecond - seconds >= 1){
-                printMetrics(currentSecond);
+            seconds++;
+            if (seconds % 1000 == 0) {
+                printMetrics(seconds);
             }
-            seconds = currentSecond;
             //
         } while (nanoTime <= endTime);
         //
         printMetrics(0);
         //
+        executorService.shutdown();
         System.out.println("End");
     }
 
@@ -147,5 +164,7 @@ public abstract class AbstractPoolApplication {
     public abstract void poolActions();
 
     public abstract long poolSize();
+
+    public abstract void shutdown();
 
 }

@@ -5,7 +5,7 @@ import stormpot.*;
 
 import java.util.concurrent.TimeUnit;
 
-public class SmallObjectBlazePool implements ObjectPool<Pooled<SmallObject>> {
+public class SmallObjectBlazePool implements FlyObjectPool<Pooled<SmallObject>> {
 
     Allocator<Pooled<SmallObject>> allocator = new Allocator<Pooled<SmallObject>>() {
 
@@ -51,6 +51,11 @@ public class SmallObjectBlazePool implements ObjectPool<Pooled<SmallObject>> {
     @Override
     public long size() {
         return pool.getTargetSize();
+    }
+
+    @Override
+    public void shutdown() {
+        pool.shutdown();
     }
 
 }

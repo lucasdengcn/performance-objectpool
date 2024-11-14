@@ -25,4 +25,15 @@ which cause huge amount of memory allocation. as following image showing.
 
 * unbound
 * cache borrowed Object in Local Thread
+* not perform well in virtual thread.
+
+## In Concurrent
+
+### Virtual Thread 
+
+![Virtual Thread Allocation](./images/virtual-thread.png)
+
+### Executors
+
+![Thread Pool Allocation](./images/thread-pool.png)
 

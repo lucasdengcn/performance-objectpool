@@ -1,17 +1,19 @@
-package com.example.demo.runtime.blazepool;
+package com.example.demo.runtime.fop;
 
+import cn.danielw.fop.Poolable;
+import com.example.demo.model.LargeObject;
 import com.example.demo.model.SmallObject;
-import com.example.demo.objectpools.SmallObjectBlazePool;
+import com.example.demo.objectpools.LargeObjectFOP;
+import com.example.demo.objectpools.SmallObjectFOP;
 import com.example.demo.runtime.AbstractPoolApplication;
-import stormpot.Pooled;
 
-public class BlazePoolApplicationSmallImpl extends AbstractPoolApplication {
+public class FOPApplicationLargeImpl extends AbstractPoolApplication {
 
-    SmallObjectBlazePool pool;
+    LargeObjectFOP pool;
 
-    public BlazePoolApplicationSmallImpl(int duration, int concurrent) {
+    public FOPApplicationLargeImpl(int duration, int concurrent) {
         super(duration, concurrent);
-        this.pool = new SmallObjectBlazePool(100_000);
+        this.pool = new LargeObjectFOP(10_000);
     }
 
     @Override
@@ -21,7 +23,7 @@ public class BlazePoolApplicationSmallImpl extends AbstractPoolApplication {
 
     @Override
     public void poolActions() {
-        try (Pooled<SmallObject> borrowObject = pool.borrowObject()) {
+        try (Poolable<LargeObject> borrowObject = pool.borrowObject()) {
             if (null == borrowObject){
                 throw new NullPointerException("Bad object Pool");
             }

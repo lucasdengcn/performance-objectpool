@@ -1,11 +1,8 @@
 package com.example.demo.objectpools;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicLong;
 
-public class SimpleObjectPool<T> implements ObjectPool<T> {
+public class SimpleObjectPool<T> implements FlyObjectPool<T> {
 
     private final ObjectBuilder<T> builder;
     private final ConcurrentLinkedQueue<T> objects;
@@ -40,6 +37,11 @@ public class SimpleObjectPool<T> implements ObjectPool<T> {
 
     public long size() {
         return objects.size();
+    }
+
+    @Override
+    public void shutdown() {
+        objects.clear();
     }
 
 }

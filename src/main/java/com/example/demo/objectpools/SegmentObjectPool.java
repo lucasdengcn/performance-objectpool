@@ -1,6 +1,6 @@
 package com.example.demo.objectpools;
 
-public class SegmentObjectPool<T> implements ObjectPool<T> {
+public class SegmentObjectPool<T> implements FlyObjectPool<T> {
 
     @Override
     public T borrowObject() {
@@ -20,6 +20,11 @@ public class SegmentObjectPool<T> implements ObjectPool<T> {
     @Override
     public long size() {
         return 0;
+    }
+
+    @Override
+    public void shutdown() {
+
     }
 
 }

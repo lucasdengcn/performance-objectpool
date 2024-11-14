@@ -33,4 +33,9 @@ public class NoPoolApplicationSmallImpl extends AbstractPoolApplication {
         return pool.size();
     }
 
+    @Override
+    public void shutdown() {
+        pool.shutdown();
+    }
+
 }

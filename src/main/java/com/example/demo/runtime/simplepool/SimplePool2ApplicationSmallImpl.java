@@ -1,15 +1,14 @@
 package com.example.demo.runtime.simplepool;
 
 import com.example.demo.model.SmallObject;
-import com.example.demo.objectpools.ObjectPool;
-import com.example.demo.objectpools.SimpleObjectPool;
+import com.example.demo.objectpools.FlyObjectPool;
 import com.example.demo.objectpools.SimpleObjectPool2;
 import com.example.demo.objectpools.SmallObjectBuilder;
 import com.example.demo.runtime.AbstractPoolApplication;
 
 public class SimplePool2ApplicationSmallImpl extends AbstractPoolApplication {
 
-    private final ObjectPool<SmallObject> objectPool;
+    private final FlyObjectPool<SmallObject> objectPool;
 
     public SimplePool2ApplicationSmallImpl(int duration, int concurrent){
         super(duration, concurrent);
@@ -33,6 +32,11 @@ public class SimplePool2ApplicationSmallImpl extends AbstractPoolApplication {
     @Override
     public long poolSize() {
         return objectPool.size();
+    }
+
+    @Override
+    public void shutdown() {
+        objectPool.shutdown();
     }
 
 }
